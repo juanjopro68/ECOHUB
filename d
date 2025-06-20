@@ -1,39 +1,30 @@
 local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
 
 local s = Instance.new("LocalScript")
 s.Name = "functionBP"
 s.Enabled = false
 s.Source = [[
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local p = game.Players.LocalPlayer
+local c = p.Character or p.CharacterAdded:Wait()
+local hrp = c:WaitForChild("HumanoidRootPart")
+local closest, dist = nil, math.huge
 
-local function getClosestPlayer()
-    local closestPlayer = nil
-    local shortestDistance = math.huge
-
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local distance = (LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
-            if distance < shortestDistance then
-                shortestDistance = distance
-                closestPlayer = player
-            end
+for _, v in pairs(game.Players:GetPlayers()) do
+    if v ~= p and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+        local d = (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude
+        if d < dist then
+            closest = v
+            dist = d
         end
     end
-
-    return closestPlayer
 end
 
-local function teleportToClosestPlayer()
-    local closestPlayer = getClosestPlayer()
-    if closestPlayer and closestPlayer.Character and closestPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        LocalPlayer.Character:SetPrimaryPartCFrame(closestPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0))
-    end
+if closest and closest.Character and closest.Character:FindFirstChild("HumanoidRootPart") then
+    hrp.CFrame = closest.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
 end
-
-teleportToClosestPlayer()
 ]]
-s.Parent = player
+s.Parent = character
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "FunctionBPActivator"
@@ -89,7 +80,7 @@ button.Parent = frame
 button.BorderSizePixel = 0
 
 button.MouseButton1Click:Connect(function()
-	local bp = player:FindFirstChild("functionBP")
+	local bp = character:FindFirstChild("functionBP")
 	if bp and bp:IsA("LocalScript") then
 		bp.Enabled = not bp.Enabled
 		if bp.Enabled then
