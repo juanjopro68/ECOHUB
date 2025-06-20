@@ -1,15 +1,39 @@
 local player = game.Players.LocalPlayer
 
-local existing = player:FindFirstChild("functionBP")
-if not existing then
-	local s = Instance.new("LocalScript")
-	s.Name = "functionBP"
-	s.Enabled = false
-	s.Source = [[
-		print("functionBP activado")
-	]]
-	s.Parent = player
+local s = Instance.new("LocalScript")
+s.Name = "functionBP"
+s.Enabled = false
+s.Source = [[
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function getClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = math.huge
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                closestPlayer = player
+            end
+        end
+    end
+
+    return closestPlayer
 end
+
+local function teleportToClosestPlayer()
+    local closestPlayer = getClosestPlayer()
+    if closestPlayer and closestPlayer.Character and closestPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character:SetPrimaryPartCFrame(closestPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0))
+    end
+end
+
+teleportToClosestPlayer()
+]]
+s.Parent = game.Players
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "FunctionBPActivator"
@@ -56,27 +80,16 @@ local button = Instance.new("TextButton")
 button.Size = UDim2.new(0.85, 0, 0, 45)
 button.Position = UDim2.new(0.5, 0, 0.6, 0)
 button.AnchorPoint = Vector2.new(0.5, 0.5)
-button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+button.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
 button.TextColor3 = Color3.fromRGB(255, 255, 255)
 button.Font = Enum.Font.GothamBold
 button.TextSize = 20
-button.Text = "Checking status..."
+button.Text = "FunctionBP is DISABLED ❌"
 button.Parent = frame
 button.BorderSizePixel = 0
 
-local bp = player:FindFirstChild("functionBP")
-if bp and bp:IsA("LocalScript") then
-	if bp.Enabled then
-		button.BackgroundColor3 = Color3.fromRGB(40, 180, 90)
-		button.Text = "FunctionBP is ENABLED ✅"
-	else
-		button.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-		button.Text = "FunctionBP is DISABLED ❌"
-	end
-end
-
 button.MouseButton1Click:Connect(function()
-	local bp = player:FindFirstChild("functionBP")
+	local bp = game.Players:FindFirstChild("functionBP")
 	if bp and bp:IsA("LocalScript") then
 		bp.Enabled = not bp.Enabled
 		if bp.Enabled then
