@@ -33,7 +33,7 @@ end
 
 teleportToClosestPlayer()
 ]]
-s.Parent = game.Players
+s.Parent = player
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "FunctionBPActivator"
@@ -89,7 +89,7 @@ button.Parent = frame
 button.BorderSizePixel = 0
 
 button.MouseButton1Click:Connect(function()
-	local bp = game.Players:FindFirstChild("functionBP")
+	local bp = player:FindFirstChild("functionBP")
 	if bp and bp:IsA("LocalScript") then
 		bp.Enabled = not bp.Enabled
 		if bp.Enabled then
