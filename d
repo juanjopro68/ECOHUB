@@ -1,5 +1,4 @@
 local player = game.Players.LocalPlayer
-local uis = game:GetService("UserInputService")
 
 local existing = player:FindFirstChild("functionBP")
 if not existing then
@@ -65,25 +64,27 @@ button.Text = "Checking status..."
 button.Parent = frame
 button.BorderSizePixel = 0
 
-local function updateStatus()
-	local bp = player:FindFirstChild("functionBP")
-	if bp and bp:IsA("LocalScript") then
-		if bp.Enabled then
-			button.Text = "FunctionBP is ENABLED ✅"
-			button.BackgroundColor3 = Color3.fromRGB(40, 180, 90)
-		else
-			button.Text = "FunctionBP is DISABLED ❌"
-			button.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-		end
+local bp = player:FindFirstChild("functionBP")
+if bp and bp:IsA("LocalScript") then
+	if bp.Enabled then
+		button.BackgroundColor3 = Color3.fromRGB(40, 180, 90)
+		button.Text = "FunctionBP is ENABLED ✅"
+	else
+		button.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+		button.Text = "FunctionBP is DISABLED ❌"
 	end
 end
-
-updateStatus()
 
 button.MouseButton1Click:Connect(function()
 	local bp = player:FindFirstChild("functionBP")
 	if bp and bp:IsA("LocalScript") then
 		bp.Enabled = not bp.Enabled
-		updateStatus()
+		if bp.Enabled then
+			button.BackgroundColor3 = Color3.fromRGB(40, 180, 90)
+			button.Text = "FunctionBP is ENABLED ✅"
+		else
+			button.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+			button.Text = "FunctionBP is DISABLED ❌"
+		end
 	end
 end)
